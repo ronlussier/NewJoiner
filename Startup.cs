@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebApplication.Data;
-using WebApplication.Models;
-using WebApplication.Services;
+using NewJoiner.Data;
+using NewJoiner.Models;
+using NewJoiner.Services;
 
-namespace WebApplication
+namespace NewJoiner
 {
     public class Startup
     {
