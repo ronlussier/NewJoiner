@@ -1,45 +1,40 @@
-/// <binding Clean='clean' />
-"use strict";
+var gulp = require('gulp');
+var sass = require('gulp-sass');
+var sourceMaps = require('gulp-sourcemaps');
+var cssMin = require('gulp-clean-css');
+var uglify = require('gulp-uglify');
+var pump = require('pump');
+var rename = require('gulp-rename');
 
-var gulp = require("gulp"),
-    rimraf = require("rimraf"),
-    concat = require("gulp-concat"),
-    cssmin = require("gulp-cssmin"),
-    uglify = require("gulp-uglify");
-
-var webroot = "./wwwroot/";
-
-var paths = {
-    js: webroot + "js/**/*.js",
-    minJs: webroot + "js/**/*.min.js",
-    css: webroot + "css/**/*.css",
-    minCss: webroot + "css/**/*.min.css",
-    concatJsDest: webroot + "js/site.min.js",
-    concatCssDest: webroot + "css/site.min.css"
-};
-
-gulp.task("clean:js", function (cb) {
-    rimraf(paths.concatJsDest, cb);
+// we want some sass...
+gulp.task('sass', function() {
+    // fetch the sass files
+    return gulp.src('publishExclude/sass/styles.scss')
+        .pipe(sass())
+        .pipe(sourceMaps.init())
+        .pipe(cssMin())
+        .pipe(sourceMaps.write())
+        .pipe(gulp.dest('wwwroot/css/'));
 });
 
-gulp.task("clean:css", function (cb) {
-    rimraf(paths.concatCssDest, cb);
+// we also want to clean the javascript
+gulp.task('browser-js', function(callback) {
+    // return the .js files
+    pump([
+        gulp.src('publishExclude/js/*.js'),
+        sourceMaps.init(),
+        uglify(),
+        sourceMaps.write(),
+        rename('script.js'),
+        gulp.dest('wwwroot/scripts')
+    ], callback);
 });
 
-gulp.task("clean", ["clean:js", "clean:css"]);
-
-gulp.task("min:js", function () {
-    return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
-        .pipe(concat(paths.concatJsDest))
-        .pipe(uglify())
-        .pipe(gulp.dest("."));
+// and now set up the watches
+gulp.task('watch-scripts', function() {
+    gulp.watch('publishExclude/sass/*.scss', ['sass']);
+    gulp.watch('publishExclude/js/*.js', ['browser-js']);
 });
 
-gulp.task("min:css", function () {
-    return gulp.src([paths.css, "!" + paths.minCss])
-        .pipe(concat(paths.concatCssDest))
-        .pipe(cssmin())
-        .pipe(gulp.dest("."));
-});
-
-gulp.task("min", ["min:js", "min:css"]);
+// let's have these guys as the default.
+gulp.task('default', ['sass', 'browser-js']);
