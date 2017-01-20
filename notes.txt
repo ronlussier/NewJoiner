@@ -1,0 +1,12 @@
+Contracts
+    interfaces for depository injection
+
+    namespace Ron.example.Contracts
+    {
+        public interface ...
+    }
+
+Services
+    SimpleInject for injecting services
+
+Repositories
