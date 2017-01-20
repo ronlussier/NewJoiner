@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NewJoiner.Models;
 
@@ -5,7 +6,7 @@ namespace NewJoiner.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             Hotel  hotel = new Hotel() 
             {
@@ -16,26 +17,30 @@ namespace NewJoiner.Controllers
                 country = "Malaysia"
             };
 
-            return View(hotel);
+            await Task.Yield();
+            return this.View(hotel);
         }
         
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
             ViewData["Message"] = "Your application description page.";
 
-            return View();
+            await Task.Yield();
+            return this.View();
         }
 
-        public IActionResult Contact()
+        public async Task<IActionResult> Contact()
         {
             ViewData["Message"] = "Your contact page.";
 
-            return View();
+            await Task.Yield();
+            return this.View();
         }
 
-        public IActionResult Error()
+        public async Task<IActionResult> Error()
         {
-            return View();
+            await Task.Yield();
+            return this.View();
         }
     }
 }
