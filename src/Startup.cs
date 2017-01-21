@@ -64,7 +64,7 @@ namespace NewJoiner
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePagesWithReExecute("/Home/Errors/{0}");
             }
 
             app.UseStaticFiles();

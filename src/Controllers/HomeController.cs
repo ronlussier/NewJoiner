@@ -1,11 +1,21 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using NewJoiner.Models;
 
 namespace NewJoiner.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ILogger _logger;
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<IActionResult> Index()
         {
             Hotel  hotel = new Hotel() 
@@ -37,10 +47,19 @@ namespace NewJoiner.Controllers
             return this.View();
         }
 
-        public async Task<IActionResult> Error()
+        public async Task<IActionResult> Errors()
         {
+            int  errCode = HttpContext.Response.StatusCode;
+
+            _logger.LogInformation( "Value of errCode is '{errCode}'", errCode );
+            if (errCode == 500 | errCode == 404) 
+            {
+                await Task.Yield();
+                return this.View($"~/Views/Errors/{errCode}.cshtml");
+            }
+
             await Task.Yield();
-            return this.View();
+            return this.View("~/Views/Errors/genericError.cshtml");
         }
     }
 }
